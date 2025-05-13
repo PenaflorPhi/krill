@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "input.h"
+#include "path.h"
 
 char *builtins[3] = {
     "exit",
@@ -26,17 +27,23 @@ void echo(char **argv, int argc) {
     }
     printf("\n");
 }
-void type(char **argv, int argc) {
-    if (argc == 1) {
-        puts("");
+
+void type(InputBuffer *input_buffer) {
+    if (input_buffer->argc == 1) {
         return;
     }
 
-    if (check_builtins(argv[1])) {
-        printf("%s is a shell builtin\n", argv[1]);
+    char *cmd = strdup(input_buffer->argv[1]);
+
+    if (check_builtins(cmd)) {
+        printf("%s is a shell builtin\n", cmd);
+    } else if ((input_buffer->program = check_on_path(cmd)) != NULL) {
+        printf("%s is %s\n", cmd, input_buffer->program);
     } else {
-        printf("%s: not found\n", argv[1]);
+        printf("%s: not found\n", cmd);
     }
+
+    free(cmd);
 }
 
 void handle_builtin(InputBuffer *input_buffer) {
@@ -45,6 +52,6 @@ void handle_builtin(InputBuffer *input_buffer) {
     } else if (strcmp("echo", input_buffer->argv[0]) == 0) {
         echo(input_buffer->argv, input_buffer->argc);
     } else if (strcmp("type", input_buffer->argv[0]) == 0) {
-        type(input_buffer->argv, input_buffer->argc);
+        type(input_buffer);
     }
 }

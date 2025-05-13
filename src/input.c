@@ -3,6 +3,7 @@
 
 #include "builtins.h"
 #include "input.h"
+#include "path.h"
 
 InputBuffer Create_Input_Buffer() {
     InputBuffer input_buffer;
@@ -10,6 +11,7 @@ InputBuffer Create_Input_Buffer() {
     input_buffer.argc       = 0;
     input_buffer.input_size = 0;
     input_buffer.builtin    = false;
+    input_buffer.on_path    = false;
 
     return input_buffer;
 }
@@ -19,6 +21,8 @@ void Clear_Input_Buffer(InputBuffer *input_buffer) {
     input_buffer->argc       = 0;
     input_buffer->input_size = 0;
     input_buffer->builtin    = false;
+    input_buffer->on_path    = false;
+    input_buffer->program    = NULL;
 
     for (int i = 0; i < MAX_ARGS; ++i) {
         input_buffer->argv[i] = NULL;
@@ -51,9 +55,10 @@ void print_input_buffer(InputBuffer *input_buffer) {
 }
 
 bool check_input(InputBuffer *input_buffer) {
-    input_buffer->builtin = check_builtins(input_buffer->argv[0]);
-
-    if (input_buffer->builtin) {
+    if ((input_buffer->builtin = check_builtins(input_buffer->argv[0])) == true) {
+        return true;
+    } else if ((input_buffer->program = check_on_path(input_buffer->argv[0]))) {
+        input_buffer->on_path = true;
         return true;
     }
 

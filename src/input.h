@@ -13,6 +13,8 @@ typedef struct {
     char        *argv[MAX_ARGS];
     unsigned int argc;
     bool         builtin;
+    bool         on_path;
+    char        *program;
 } InputBuffer;
 
 InputBuffer Create_Input_Buffer();
