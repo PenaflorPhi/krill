@@ -8,7 +8,7 @@ BUILD_DIR  = build
 TARGET     = $(BUILD_DIR)/krill
 
 # Source and object files
-SRC_FILES  = $(SRC_DIR)/main.c
+SRC_FILES  = $(SRC_DIR)/main.c $(SRC_DIR)/builtins.c $(SRC_DIR)/input.c
 
 OBJ_FILES  = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
