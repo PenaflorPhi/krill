@@ -53,12 +53,6 @@ void exec(InputBuffer *input_buffer) {
     } else {
         int status;
         waitpid(pid, &status, 0);
-
-        if (WIFEXITED(status)) {
-            printf("Child exited with code %d\n", WEXITSTATUS(status));
-        } else {
-            printf("Child terminated abnormally\n");
-        }
     }
 }
 
