@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "builtins.h"
+#include "exec.h"
 #include "input.h"
 
 int main(void) {
@@ -17,6 +18,8 @@ int main(void) {
         check_input(&input_buffer);
         if (input_buffer.builtin) {
             handle_builtin(&input_buffer);
+        } else if (input_buffer.is_executable) {
+            handle_executable(&input_buffer);
         } else {
             printf("%s: command not found\n", input_buffer.input);
         }

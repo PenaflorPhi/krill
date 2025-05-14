@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "exec.h"
 #include "input.h"
-#include "path.h"
 
 char *builtins[3] = {
     "exit",
@@ -37,7 +37,7 @@ void type(InputBuffer *input_buffer) {
 
     if (check_builtins(cmd)) {
         printf("%s is a shell builtin\n", cmd);
-    } else if ((input_buffer->program = check_on_path(cmd)) != NULL) {
+    } else if ((input_buffer->program = check_executable(cmd)) != NULL) {
         printf("%s is %s\n", cmd, input_buffer->program);
     } else {
         printf("%s: not found\n", cmd);

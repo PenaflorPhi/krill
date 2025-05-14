@@ -2,27 +2,27 @@
 #include <string.h>
 
 #include "builtins.h"
+#include "exec.h"
 #include "input.h"
-#include "path.h"
 
 InputBuffer Create_Input_Buffer() {
     InputBuffer input_buffer;
 
-    input_buffer.argc       = 0;
-    input_buffer.input_size = 0;
-    input_buffer.builtin    = false;
-    input_buffer.on_path    = false;
+    input_buffer.argc          = 0;
+    input_buffer.input_size    = 0;
+    input_buffer.builtin       = false;
+    input_buffer.is_executable = false;
 
     return input_buffer;
 }
 
 void Clear_Input_Buffer(InputBuffer *input_buffer) {
-    input_buffer->input[0]   = '\0';
-    input_buffer->argc       = 0;
-    input_buffer->input_size = 0;
-    input_buffer->builtin    = false;
-    input_buffer->on_path    = false;
-    input_buffer->program    = NULL;
+    input_buffer->input[0]      = '\0';
+    input_buffer->argc          = 0;
+    input_buffer->input_size    = 0;
+    input_buffer->builtin       = false;
+    input_buffer->is_executable = false;
+    input_buffer->program       = NULL;
 
     for (int i = 0; i < MAX_ARGS; ++i) {
         input_buffer->argv[i] = NULL;
@@ -52,13 +52,20 @@ void print_input_buffer(InputBuffer *input_buffer) {
     printf("input_size: %d\n", input_buffer->input_size);
     printf("argc: %u\n", input_buffer->argc);
     printf("builtin: %d\n", input_buffer->builtin);
+    printf("exec: %d\n", input_buffer->is_executable);
+    printf("program: %s\n", input_buffer->program);
+    printf("args:\n");
+    for (unsigned int i = 0; i < input_buffer->argc; ++i) {
+        printf("\targ %d: %s\n", i, input_buffer->argv[i]);
+    }
 }
 
 bool check_input(InputBuffer *input_buffer) {
     if ((input_buffer->builtin = check_builtins(input_buffer->argv[0])) == true) {
+        input_buffer->is_executable = false;
         return true;
-    } else if ((input_buffer->program = check_on_path(input_buffer->argv[0]))) {
-        input_buffer->on_path = true;
+    } else if ((input_buffer->program = check_executable(input_buffer->argv[0]))) {
+        input_buffer->is_executable = true;
         return true;
     }
 
